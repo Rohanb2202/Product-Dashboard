@@ -14,14 +14,23 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedSort, setSelectedSort] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('search') || ''
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setIsLoading(true)
+        setError(null)
         const res = await fetch('https://fakestoreapi.com/products')
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
         const data = await res.json()
+        if (!Array.isArray(data)) {
+          throw new Error('Data is not in the expected format')
+        }
         setProducts(data)
         setFilteredProducts(data)
         
@@ -30,6 +39,7 @@ export default function ProductsPage() {
         setCategories(uniqueCategories as string[])
       } catch (error) {
         console.error('Error fetching products:', error)
+        setError('Failed to fetch products. Please try again later.')
       } finally {
         setIsLoading(false)
       }
@@ -85,10 +95,18 @@ export default function ProductsPage() {
     )
   }
 
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-600 dark:text-red-400">{error}</div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0" suppressHydrationWarning>
           Products {filteredProducts.length > 0 && `(${filteredProducts.length})`}
         </h1>
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center">

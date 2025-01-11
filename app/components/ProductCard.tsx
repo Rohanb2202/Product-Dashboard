@@ -28,9 +28,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex justify-between items-center">
           <Link
             href={`/products/${product.id}`}
-            className="text-purple-600 dark:text-purple-400 hover:underline"
+            className="text-primary dark:text-blue-400 hover:underline"
           >
-            View Details
+            <span>View Details</span>
           </Link>
           <div className="flex items-center space-x-2">
             <FavoriteButton productId={product.id} />

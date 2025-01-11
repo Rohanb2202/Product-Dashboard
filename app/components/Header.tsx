@@ -50,7 +50,7 @@ const Header = () => {
             >
               <Heart className={`w-5 h-5 ${pathname === '/favorites' ? 'fill-purple-600 stroke-purple-600 dark:fill-purple-400 dark:stroke-purple-400' : 'text-gray-600 dark:text-gray-300'}`} />
               {favoriteCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 dark:bg-purple-400 text-white text-xs rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 dark:bg-purple-400 text-white text-xs rounded-full flex items-center justify-center" suppressHydrationWarning>
                   {favoriteCount}
                 </span>
               )}
