@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useFavoriteStore } from '../store/favoriteStore'
+import { useCartStore } from '../store/cartStore'
 import ThemeToggle from './ThemeToggle'
-import { Package, Heart } from 'lucide-react'
+import { Package, Heart, ShoppingCart } from 'lucide-react'
 
 const Header = () => {
   const pathname = usePathname()
   const favoriteCount = useFavoriteStore((state) => state.favorites.length)
+  const cartCount = useCartStore((state) => state.getCartCount())
 
   return (
     <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50 border-b border-purple-100 dark:border-purple-900">
@@ -31,6 +33,17 @@ const Header = () => {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
+            <Link
+              href="/cart"
+              className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors relative"
+            >
+              <ShoppingCart className={`w-5 h-5 ${pathname === '/cart' ? 'text-purple-600 dark:text-purple-400' : 'text-gray-600 dark:text-gray-300'}`} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-600 dark:bg-purple-400 text-white text-xs rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
             <Link
               href="/favorites"
               className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors relative"

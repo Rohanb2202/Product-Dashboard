@@ -2,12 +2,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '../types/product'
 import FavoriteButton from './FavoriteButton'
+import { useCartStore } from '../store/cartStore'
+import { ShoppingCart } from 'lucide-react'
 
 interface ProductCardProps {
   product: Product
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const addToCart = useCartStore((state) => state.addToCart)
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
       <div className="relative h-48">
@@ -24,11 +28,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex justify-between items-center">
           <Link
             href={`/products/${product.id}`}
-            className="text-primary dark:text-blue-400 hover:underline"
+            className="text-purple-600 dark:text-purple-400 hover:underline"
           >
             View Details
           </Link>
-          <FavoriteButton productId={product.id} />
+          <div className="flex items-center space-x-2">
+            <FavoriteButton productId={product.id} />
+            <button
+              onClick={() => addToCart(product)}
+              className="p-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors"
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

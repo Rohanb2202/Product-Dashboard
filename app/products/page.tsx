@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import ProductCard from '../components/ProductCard'
 import ProductFilters from '../components/ProductFilters'
 import ProductSearch from '../components/ProductSearch'
@@ -12,8 +13,9 @@ export default function ProductsPage() {
   const [categories, setCategories] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedSort, setSelectedSort] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get('search') || ''
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,40 +39,42 @@ export default function ProductsPage() {
   }, [])
 
   useEffect(() => {
-    let result = [...products]
+    if (products.length > 0) {
+      let result = [...products]
 
-    // Apply search filter
-    if (searchQuery) {
-      result = result.filter(product => 
-        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    }
-
-    // Apply category filter
-    if (selectedCategory) {
-      result = result.filter(product => product.category === selectedCategory)
-    }
-
-    // Apply sorting
-    if (selectedSort) {
-      switch (selectedSort) {
-        case 'price-asc':
-          result.sort((a, b) => a.price - b.price)
-          break
-        case 'price-desc':
-          result.sort((a, b) => b.price - a.price)
-          break
-        case 'name-asc':
-          result.sort((a, b) => a.title.localeCompare(b.title))
-          break
-        case 'name-desc':
-          result.sort((a, b) => b.title.localeCompare(a.title))
-          break
+      // Apply search filter
+      if (searchQuery) {
+        result = result.filter(product => 
+          product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       }
-    }
 
-    setFilteredProducts(result)
+      // Apply category filter
+      if (selectedCategory) {
+        result = result.filter(product => product.category === selectedCategory)
+      }
+
+      // Apply sorting
+      if (selectedSort) {
+        switch (selectedSort) {
+          case 'price-asc':
+            result.sort((a, b) => a.price - b.price)
+            break
+          case 'price-desc':
+            result.sort((a, b) => b.price - a.price)
+            break
+          case 'name-asc':
+            result.sort((a, b) => a.title.localeCompare(b.title))
+            break
+          case 'name-desc':
+            result.sort((a, b) => b.title.localeCompare(a.title))
+            break
+        }
+      }
+
+      setFilteredProducts(result)
+    }
   }, [selectedCategory, selectedSort, searchQuery, products])
 
   if (isLoading) {
@@ -88,7 +92,7 @@ export default function ProductsPage() {
           Products {filteredProducts.length > 0 && `(${filteredProducts.length})`}
         </h1>
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-          <ProductSearch onSearch={setSearchQuery} />
+          <ProductSearch products={products} />
           <ProductFilters
             categories={categories}
             selectedCategory={selectedCategory}
